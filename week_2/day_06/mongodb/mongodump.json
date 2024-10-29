@@ -1,0 +1,4 @@
+{"_id":{"$oid":"67166ab57098f290f3fe6911"},"name":"Alice","age":19}
+{"_id":{"$oid":"67166b1007e936f170fe6911"},"name":"Bruno","age":22}
+{"_id":{"$oid":"67166b1a07e936f170fe6912"},"name":"Pierre","age":21}
+{"_id":{"$oid":"67166b2307e936f170fe6913"},"name":"Henry","age":28}

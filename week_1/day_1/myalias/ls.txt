@@ -1,0 +1,7 @@
+total 40
+-rw-r--r--  1 tristangbn  staff     0B 20 mai 16:15 anonymes.txt
+-rw-rw-rw-@ 1 tristangbn  staff   222B 17 mai 16:05 employes.txt
+-rw-r--r--@ 1 tristangbn  staff   286B 18 mai 12:18 index.html
+drwxr-xr-x  8 tristangbn  staff   256B 23 mai 18:24 logs
+-rw-r--r--  1 tristangbn  staff     0B 24 mai 15:45 ls.txt
+-rw-r--r--@ 1 tristangbn  staff    10K 16 mai 15:15 quiz.zip

@@ -1,0 +1,6 @@
+1 Anais History 80 B 0.345
+2 Antoine Biology 70 C 0.583
+3 Julie Physics 85 B+ 0.438
+4 Emma History 90 A 0.632
+5 Marlene Maths 80 B 0.832
+6 Lucas Chemistry 80 B 0.464

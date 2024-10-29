@@ -1,0 +1,3 @@
+ENV_TYPE=dev
+
+*/1 * * * * /home/engineer/la_capsule/full_time/week_1/day_2/autobackup/mon_backup.sh >> /home/engineer/logs/cronlog 2>&1

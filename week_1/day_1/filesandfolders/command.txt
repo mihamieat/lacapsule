@@ -1,0 +1,4 @@
+grep INFO log1.txt | wc -l
+
+grep INFO log* | wc -l
+ls log*.txt | xargs grep -o INFO | uniq -c

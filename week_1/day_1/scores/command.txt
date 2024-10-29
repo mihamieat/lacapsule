@@ -1,0 +1,1 @@
+awk '{s+=$4} END {a=s/NR} END {print a}' scores.txt

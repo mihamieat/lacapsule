@@ -1,0 +1,1 @@
+ip addr show enp6s18 | awk NR == 3 | awk '{print }'
