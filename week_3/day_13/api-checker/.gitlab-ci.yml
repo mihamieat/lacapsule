@@ -1,7 +1,22 @@
 stages:
-  - checkapi
+  - checks
 
 apichecker:
-  stage: checkapi
+  stage: checks
   script: 
-     - curl "https://jsonplaceholder.typicode.cm/users"
+     - curl "https://jsonplaceholder.typicode.com/users"
+
+daychecker:
+  stage: checks
+  script:
+     - chmod u+x ./checkDate.sh
+     - ./checkDate.sh
+  only:
+     - merge_requests
+
+sizechecker:
+  stage: checks
+  script:
+    - chmod u+x ./checkSize.sh
+    - echo ${MAXIMUM_WEIGHT}
+    - ./checkSize.sh ${MAXIMUM_WEIGHT}
