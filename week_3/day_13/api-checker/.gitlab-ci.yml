@@ -1,0 +1,7 @@
+stages:
+  - checkapi
+
+apichecker:
+  stage: checkapi
+  script: 
+     - curl "https://jsonplaceholder.typicode.cm/users"
