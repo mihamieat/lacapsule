@@ -1,9 +1,15 @@
 stages:
   - stage1
 
-hello_word_job:
+displayinfos:
   stage: stage1
   script:
-    - echo "Hello, world!"
-  only:
-    - development
+     - echo "Commit author is ${CI_COMMIT_AUTHOR}"
+     - echo "Commit id is ${CI_COMMIT_SHA}"
+     - echo "List of edited files in this Commit $(git diff --name-only $CI_COMMIT_BEFORE_SHA $CI_COMMIT_SHA)"
+
+check-author:
+  stage: stage1
+  script:
+     - chmod u+x ./checkAuthor.sh
+     - ./checkAuthor.sh "${CI_COMMIT_AUTHOR}"
