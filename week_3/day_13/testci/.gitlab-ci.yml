@@ -1,0 +1,9 @@
+stages:
+  - stage1
+
+hello_word_job:
+  stage: stage1
+  script:
+    - echo "Hello, world!"
+  only:
+    - development
