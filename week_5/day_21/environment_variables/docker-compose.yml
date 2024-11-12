@@ -1,0 +1,16 @@
+name: env_var_test
+
+services:
+  database:
+    image: "postgres:latest"
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: acknowledge_me
+
+  mymail:
+    image: mymails:latest
+    environment:
+      - EMAIL=${EMAIL}
