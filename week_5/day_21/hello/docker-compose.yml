@@ -1,0 +1,8 @@
+name: hello-world
+
+services:
+  helloworld:
+    image: hello-world:latest
+
+  helloworld2:
+    image: hello-world2:latest
