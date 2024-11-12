@@ -1,0 +1,17 @@
+name: webcompose
+
+services:
+  server:
+    image: nginx-lacapsule:alpha
+    ports:
+      - "8080:80"
+    networks:
+      - webnet
+    volumes:
+      - ./site-content:/usr/share/nginx/html
+
+networks:
+  webnet:
+
+volumes:
+  my_app_volume:
