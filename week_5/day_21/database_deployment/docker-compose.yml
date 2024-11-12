@@ -1,0 +1,14 @@
+name: database_deployment
+
+services:
+  database:
+    image: db-deploy0:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: acknowledge_me
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
