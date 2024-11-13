@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  mws-deployment
+  labels:
+    app:  mywebserver
+spec:
+  selector:
+    matchLabels:
+      app: mywebserver
+  replicas: 5
+  template:
+    metadata:
+      labels:
+        app:  mywebserver
+    spec:
+      containers:
+      - name:  my-nginx-container
+        image: nginxdemos/hello:latest
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 80
