@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpd-server-deployment
+  labels:
+    app: httpd-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: httpd-server
+  template:
+    metadata:
+      labels:
+        app: httpd-server
+    spec:
+      containers:
+      - name: httpd-server
+      image: httpd:latest
+      imagePullPolicy: Always
+      ports:
+        - containerPort: 80
