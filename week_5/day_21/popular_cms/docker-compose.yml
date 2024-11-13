@@ -1,0 +1,30 @@
+services:
+  mariadb:
+    image: mariadb:latest
+    restart: on-failure
+    env_file:
+      - .wp.env
+    volumes:
+      - mariadb:/var/lib/mysql
+
+  adminer:
+    image: adminer:latest
+    restart: always
+    ports:
+      - 8686:8080
+    depends_on:
+      - mariadb
+  
+  wordpress:
+    image: wordpress
+    restart: always
+    ports:
+      - 8585:80
+    env_file:
+      - .wp.env
+    volumes:
+      - wordpress:/var/www/html 
+
+volumes:
+  mariadb:
+  wordpress:
