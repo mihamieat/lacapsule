@@ -9,5 +9,11 @@ services:
       POSTGRES_PASSWORD: acknowledge_me
     volumes:
       - db_data:/var/lib/postgresql/data
+  adminer:
+    image: adminer:latest
+    restart: always
+    ports:
+      - 8080:8080
+
 volumes:
   db_data:
