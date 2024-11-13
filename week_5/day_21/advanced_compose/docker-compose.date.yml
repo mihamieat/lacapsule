@@ -1,0 +1,7 @@
+services:
+  service-alpha:
+    image: what-time-is-it:latest
+  service-beta:
+    image: what-time-is-it:latest
+    depends_on:
+      - service-alpha
