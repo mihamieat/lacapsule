@@ -1,0 +1,28 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: mydatabase-pv
+  labels:
+    app: mydatabase
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 5M
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/mydatabase"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: mydatabase-pvc
+  labels:
+    app: mydatabase
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5M
