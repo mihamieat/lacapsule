@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: motd-deployment
+  namespace: default
+  labels:
+    app: motd
+spec:
+  selector:
+    matchLabels:
+      app: motd
+  replicas: 5
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: motd
+    spec:
+      containers:
+      - name: alpine
+        image: alpine:latest
+        env:
+        - name: MESSAGE
+          valueFrom:
+            configMapKeyRef:
+              name: motd-config
+              key: MESSAGE
+        command: [ "sh", "-c", "echo $MESSAGE && sleep 3600" ] # command to display environment variables.

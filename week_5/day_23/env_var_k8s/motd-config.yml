@@ -1,0 +1,10 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: motd-config
+  namespace: default
+  labels:
+    app: motd
+data:
+  MESSAGE: "New message: The application has been updated!" # updated message
+  OTHER_MESSAGE: "You can't see me!"
