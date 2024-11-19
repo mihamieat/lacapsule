@@ -90,3 +90,25 @@ aws dynamodb put-item \
 ```sh
 aws dynamodb scan --table-name myfirstdatabaseincloud 
 ```
+
+### coufiguration du service google firestore
+
+#### install google sdk comman lines
+[installation instructions](https://cloud.google.com/sdk/docs/install-sdk)
+
+#### list databases
+
+```sh
+gcloud auth login
+gcloud services enable firestore.googleapis.com
+gcloud firestore databases list
+```
+
+#### [gcloud firestore commands](https://cloud.google.com/sdk/gcloud/reference/firestore)
+
+#### get data
+```sh
+curl -X GET \                                              
+  -H "Authorization: Bearer $(gcloud auth application-default print-access-token)" \
+  "https://firestore.googleapis.com/v1/projects/<project-id>/databases/<database>/documents/myfirstdatabaseincloud"
+```
