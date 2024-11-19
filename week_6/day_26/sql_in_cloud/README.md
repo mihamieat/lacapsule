@@ -34,57 +34,69 @@ postgres=# SELECT VERSION();
 ```
 
 👉 Modifiez les paramètres de la base de données afin de :
-Sauvegarder automatiquement la base de données à 4h du matin
-Conserver les sauvegardes automatiques pendant 1 jour (au lieu de 7 par défaut)
+
+- Sauvegarder automatiquement la base de données à 4h du matin
+- Conserver les sauvegardes automatiques pendant 1 jour (au lieu de 7 par défaut)
 
 👉 Appliquez immédiatement les modifications de la configuration.
+
 Le service RDS est basé sur un concept de sauvegarde nommé "instantanés" (ou snapshot). Ce système permet de restaurer rapidement une sauvegarde de base de données en créant une nouvelle instance en quelques clics.
+
 Malheureusement, cette fonctionnalité n’est pas incluse dans l’offre gratuite d’AWS.
+
 👉 Assurez-vous de résilier et libérer toutes les ressources crées afin d’éviter une surfacturation et de dépasser le tier gratuit d’AWS :
-Base de données RDS : supprimez l’instance "myfirstdatabaseincloud"
-Instantanés : supprimez tous les éventuels snapshots restants
 
-J'ai fini cette partie
-CONFIGURATION DU SERVICE GOOGLE CLOUD SQL
+- Base de données RDS : supprimez l’instance "myfirstdatabaseincloud"
+- Instantanés : supprimez tous les éventuels snapshots restants
+
+### CONFIGURATION DU SERVICE GOOGLE CLOUD SQL
 👉 À partir du service Google Cloud SQL, créez une instance de base de données PostgreSQL configurée comme suit :
-Modèle : Offre standard
-Identifiant d'instance de base de données : myfirstdatabaseincloud
-Mot de passe : Généré automatiquement par Google Cloud
-Classe d’instance : db-f1-micro
-Stockage alloué : 10 Go
-Connectivité : Accès public activé
-Port de base de données : 5432
 
-J'ai fini cette partie
-UTILISATION DU SERVICE
+- Modèle : Offre standard
+- Identifiant d'instance de base de données : myfirstdatabaseincloud
+- Mot de passe : Généré automatiquement par Google Cloud
+- Classe d’instance : db-f1-micro
+- Stockage alloué : 10 Go
+- Connectivité : Accès public activé
+- Port de base de données : 5432
+
+### UTILISATION DU SERVICE
 👉 Récupérez le point de terminaison afin de vous connecter à la base de données via la CLI psql.
 psql -h [endpoint] -U postgres -d postgres
 
 👉 Une fois l'interpréteur de commande psql démarré, vérifiez la version utilisée par la base de données grâce à l’instruction suivante.
 
+```sh
 postgres=# SELECT VERSION();
+```
+
 👉 Modifiez les paramètres de la base de données pour configurer les sauvegardes automatiques à 4h du matin et les conserver pendant 1 jour.
+
 👉 Supprimez l'instance à la fin pour éviter toute surfacturation.
 
-J'ai fini cette partie
-CONFIGURATION DU SERVICE AZURE SQL DATABASE
+### CONFIGURATION DU SERVICE AZURE SQL DATABASE
 👉 Créez une base de données SQL sur Azure SQL Database avec les paramètres suivants :
-Modèle : Offre standard
-Nom de la base de données : myfirstdatabaseincloud
-Serveur : Créez un nouveau serveur avec authentification SQL
-Mot de passe : Généré automatiquement par Azure
-Performance : Basic
-Taille de stockage : 2 Go
+- Modèle : Offre standard
+- Nom de la base de données : myfirstdatabaseincloud
+- Serveur : Créez un nouveau serveur avec authentification SQL
+- Mot de passe : Généré automatiquement par Azure
+- Performance : Basic
+- Taille de stockage : 2 Go
 
-J'ai fini cette partie
-UTILISATION DU SERVICE
+### UTILISATION DU SERVICE
 👉 Récupérez le point de terminaison afin de vous connecter à la base de données via la CLI psql.
 
+```sh
 psql -h [endpoint] -U postgres -d postgres
+```
 
 👉 Une fois l'interpréteur de commande psql démarré, vérifiez la version utilisée par la base de données grâce à l’instruction suivante.
+```sh
 postgres=# SELECT VERSION();
+```
+
 👉 Modifiez les paramètres de la base de données pour configurer les sauvegardes automatiques à 4h du matin et les conserver pendant 1 jour.
+
 👉 Supprimez l'instance à la fin pour éviter toute surfacturation.
 
 ## my answers and notes
@@ -121,6 +133,7 @@ password ``vMopI5pl2odhpeEvXVp2``
 - [x] Connectivité : Accès public activé
 - [x] Port de base de données : 5432
 
+make sure that the database accepts inbound connections from authorized ip addresses.
 check ip in ``connect to this instance > public ip connectivity > public ip address``
 
 ```sh
@@ -132,3 +145,27 @@ psql -h 34.163.159.171 -U postgres
 
 #### delete
 disable deletion protection
+
+### configuration du service azure sql database
+
+- [x] Modèle : Offre standard
+- [x] Nom de la base de données : myfirstdatabaseincloud
+- [x] Serveur : Créez un nouveau serveur avec authentification SQL
+- [x] Mot de passe : Généré automatiquement par Azure ``dowfa5-wajrah-Veqzot``
+- [x] Performance : Basic
+- [x] Taille de stockage : 2 Go
+
+#### commands
+first install [azure sql commands](https://www.microsoft.com/en-us/sql-server/blog/2017/05/16/sql-server-command-line-tools-for-macos-released/)
+```sh
+sqlcmd -S mihamieat.database.windows.net -U postgres  
+```
+
+#### microsoft sql db commands
+
+```sh
+SELECT @@VERSION;
+GO
+SELECT name FROM sys.databases;
+GO
+```
