@@ -74,6 +74,7 @@ Instances : résiliez (terminate) l’instance "myfirstvps"
 ### utilisation d'une instance ec2
 
 ```sh
+chmod 400 ~/.ssh/myfirstvps.pem
 ssh -i ~/.ssh/myfirstvps.pem admin@34.245.156.128
 ```
 
