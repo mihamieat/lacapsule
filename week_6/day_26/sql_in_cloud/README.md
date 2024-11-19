@@ -109,4 +109,26 @@ password ``vMopI5pl2odhpeEvXVp2``
 
 - [x] created a new securit group to allow access to port 5499 from my computer
 - [x] apply new security group in db instance
-- [x] suppression  
+- [x] suppression
+
+### configuration du service google cloud sql
+
+- [x] Modèle : Offre standard
+- [x] Identifiant d'instance de base de données : myfirstdatabaseincloud
+- [x] Mot de passe : Généré automatiquement par Google Cloud ``|EQb:)e}-BuokvC|``
+- [ ] Classe d’instance : db-f1-micro
+- [x] Stockage alloué : 10 Go
+- [x] Connectivité : Accès public activé
+- [x] Port de base de données : 5432
+
+check ip in ``connect to this instance > public ip connectivity > public ip address``
+
+```sh
+psql -h 34.163.159.171 -U postgres 
+```
+
+#### backups
+``backups > edit > edit backup settings ``
+
+#### delete
+disable deletion protection
