@@ -112,3 +112,17 @@ curl -X GET \
   -H "Authorization: Bearer $(gcloud auth application-default print-access-token)" \
   "https://firestore.googleapis.com/v1/projects/<project-id>/databases/<database>/documents/myfirstdatabaseincloud"
 ```
+
+### configuration du service cosmodb (mongodb)
+
+#### commands
+```sh
+mongosh "[mongodburl]Writes=false" -u mihamieat -p = '<pass>' --ssl --sslAllowInvalidCertificates
+>  db.myCollection.insertOne({
+...   name: "John Doe",
+...   age: 30,
+...   email: "johndoe@example.com"
+... });
+
+> db.myCollection.find()
+```
