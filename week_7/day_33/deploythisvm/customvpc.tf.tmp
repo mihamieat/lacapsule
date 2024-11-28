@@ -1,0 +1,151 @@
+#### Terraform ####
+terraform {
+  required_providers {
+    aws = {
+      version = ">= 5.18.1"
+      source  = "hashicorp/aws"
+    }
+  }
+}
+##################
+
+#### Provider ####
+provider "aws" {
+  region = "eu-west-3" # Add the region you're using
+}
+##################
+
+#### Variables ####
+variable "instance_tag" {
+  description = "Tag given to each deployed Instance"
+  type        = list(string)
+  default     = ["terraform-test-ssh-icmp"]
+}
+
+variable "key_pair_name" {
+  description = "key_pair_name"
+  type        = string
+  default     = "rev-proxy"
+}
+
+variable "cidr_block" {
+  description = "CIDR Block"
+  type        = string
+  default     = "10.0.0.0/16" # Added a default CIDR block
+}
+
+variable "counter" {
+  description = "Number of instances to create"
+  type        = number
+  default     = 1
+}
+##################
+
+#### Resources ####
+resource "aws_vpc" "test_env" {
+  cidr_block           = var.cidr_block
+  enable_dns_hostnames = true
+  enable_dns_support   = true
+
+  tags = { # Fixed tags syntax
+    Name = "terraform-test2"
+  }
+}
+
+resource "aws_internet_gateway" "main" {
+  vpc_id = aws_vpc.test_env.id
+
+  tags = {
+    Name = "Main IGW"
+  }
+}
+
+resource "aws_subnet" "subnet" {
+  vpc_id            = aws_vpc.test_env.id
+  cidr_block        = cidrsubnet(var.cidr_block, 8, 1) # Creates a subnet within the VPC CIDR
+  availability_zone = "eu-west-3a"                     # Specify an availability zone
+
+  tags = {
+    Name = "Main Subnet"
+  }
+}
+
+resource "aws_route_table" "main" {
+  vpc_id = aws_vpc.test_env.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main.id
+  }
+
+  tags = {
+    Name = "Main Route Table"
+  }
+}
+
+resource "aws_route_table_association" "main" {
+  subnet_id      = aws_subnet.subnet.id
+  route_table_id = aws_route_table.main.id
+}
+
+resource "aws_security_group" "security" {
+  name   = "launch-wizard-1"
+  vpc_id = aws_vpc.test_env.id # Use the VPC you created instead of a hardcoded VPC ID
+
+  ingress {
+    cidr_blocks = [
+      "176.186.2.251/32"
+    ]
+    from_port = 22
+    to_port   = 22
+    protocol  = "tcp"
+  }
+
+  ingress {
+    cidr_blocks = ["176.186.2.251/32"]
+    from_port   = -1     # ICMP type (-1 allows all types)
+    to_port     = -1     # ICMP code (-1 allows all codes)
+    protocol    = "icmp" # ICMP protocol
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_instance" "test_env_ec2" {
+  count                       = var.counter
+  ami                         = data.aws_ami.ubuntu_ami.id
+  instance_type               = "t2.micro"
+  key_name                    = var.key_pair_name
+  vpc_security_group_ids      = [aws_security_group.security.id] # Changed from security_groups
+  associate_public_ip_address = true
+
+  subnet_id = aws_subnet.subnet.id
+
+  tags = {
+    Name = var.instance_tag[count.index]
+  }
+}
+###################
+
+#### Data ####
+data "aws_ami" "debian_ami" {
+  most_recent = true
+  
+  filter {
+    name   = "name"
+    values = ["debian-12-amd64-*"]
+  }
+  
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+  
+  owners = ["679593333241"]  # Debian Official account
+}
+##############
