@@ -1,0 +1,44 @@
+services:
+  web1:
+    image: nginx:stable
+    volumes:
+    - ./service1:/usr/share/nginx/html
+    - ./nginx/service1.conf:/etc/nginx/conf.d/default.conf
+    ports:
+    - "8080:80"
+    expose:
+      - 80
+    networks:
+      - webnet
+    environment:
+    - NGINX_HOST=foobar1.com
+    - NGINX_PORT=80
+
+  web2:
+      image: nginx:stable
+      volumes:
+      - ./service2:/usr/share/nginx/html
+      - ./nginx/service2.conf:/etc/nginx/conf.d/default.conf
+      ports:
+      - "8081:80"
+      expose:
+        - 80
+      networks:
+      - webnet
+      environment:
+      - NGINX_HOST=foobar2.com
+      - NGINX_PORT=80
+
+  reverse-proxy:
+    image: nginx:latest
+    container_name: reverse_proxy
+    volumes:
+      - ./nginx/reverse_proxy.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "80:80"
+    networks:
+      - webnet
+
+networks:
+  webnet:
+    driver: bridge
