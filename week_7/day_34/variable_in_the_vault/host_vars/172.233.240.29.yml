@@ -1,0 +1,2 @@
+linux_username: paige
+linux_password: "{{ 'il0v3AEW' | password_hash('sha512') }}"

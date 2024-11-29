@@ -1,0 +1,37 @@
+- name: Create paige user
+  hosts:
+    - all
+  remote_user: mihamieat
+  become: yes
+  tasks:
+    - name: create paige user to sudo group
+      ansible.builtin.user:
+        name: "{{ linux_username }}"
+        group: sudo
+        password: "{{ linux_password }}"
+        shell: /bin/bash
+        generate_ssh_key: yes
+        ssh_key_bits: 2048
+        ssh_key_file: .ssh/id_rsa
+    - name: create poppy user to sudo group
+      ansible.builtin.user:
+        name: "{{ poppy_user }}"
+        group: sudo
+        password: "{{ linux_password }}"
+        shell: /bin/bash
+        generate_ssh_key: yes
+        ssh_key_bits: 2048
+        ssh_key_file: .ssh/id_rsa
+    - name: Disable password authentication for SSH (for paige user)
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config.d/no_pass.conf
+        regexp: "^#?PasswordAuthentication"
+        line: "PasswordAuthentication no"
+        state: present
+      notify:
+        - restart sshd
+  handlers:
+    - name: restart sshd
+      ansible.builtin.systemd:
+        name: ssh
+        state: restarted
