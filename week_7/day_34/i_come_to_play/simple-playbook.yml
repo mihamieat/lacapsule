@@ -1,0 +1,61 @@
+- name: I come to play
+  hosts:
+    - all 
+  remote_user: mihamieat
+  tasks:
+    - name: Ping the server
+      ansible.builtin.ping:
+    - name: copy fichier
+      ansible.builtin.copy:
+        src: ./cmd.sh
+        dest: ~/.
+        owner: mihamieat
+        mode: u+x
+
+    - name: execute ./cmd.sh
+      ansible.builtin.shell: |
+        ./cmd.sh
+
+- name: Create nginx user
+  hosts:
+    - all
+  remote_user: mihamieat
+  become: yes
+  tasks:
+    - name: create nginx user to sudo group
+      ansible.builtin.user:
+        name: nginx
+        group: sudo
+        password: "{{ 'ihateapache' | password_hash('sha512') }}"
+        shell: /bin/bash
+        generate_ssh_key: yes
+        ssh_key_bits: 2048
+        ssh_key_file: .ssh/id_rsa
+    - name: Disable password authentication for SSH (for nginx user)
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config.d/no_pass.conf
+        regexp: '^#?PasswordAuthentication'
+        line: 'PasswordAuthentication no'
+        state: present
+      notify:
+        - restart sshd
+  handlers:
+    - name: restart sshd
+      ansible.builtin.systemd:
+        name: ssh
+        state: restarted
+
+- name: Install nginx with sudo privileges
+  hosts: all
+  remote_user: nginx
+  become: yes
+  tasks:
+    - name: Update package cache (Debian-based)
+      ansible.builtin.apt:
+        update_cache: yes
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Install nginx package
+      ansible.builtin.package:
+        name: nginx
+        state: present

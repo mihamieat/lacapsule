@@ -1,0 +1,6 @@
+all:
+  hosts:
+    172.233.240.81:
+      ansible_user: mihamieat
+    172.233.240.29:
+      ansible_user: mihamieat
