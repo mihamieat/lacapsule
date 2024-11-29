@@ -57,3 +57,15 @@ sudo apt update && sudo apt install sshpass -y
 ansible -i linode.yml all -m ping --ask-pass
 
 ```
+
+## without password authentication and with ssh key
+
+```sh
+ssh-copy-id user@ip
+```
+
+- disable in ansible config
+
+```yaml
+# ansible_ssh_private_key_file: ~/.ssh/id_rsa.pub
+```
