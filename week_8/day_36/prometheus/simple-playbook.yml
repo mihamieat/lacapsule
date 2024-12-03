@@ -1,0 +1,40 @@
+- name: Add user and configure SSH
+  hosts: all
+  remote_user: root
+  become: yes
+  tasks:
+    - name: Ensure the host is reachable
+      ansible.builtin.ping:
+
+    - name: Create nginx user and add to sudo group
+      ansible.builtin.user:
+        name: mihamieat
+        group: sudo
+        password: "{{ '230792' | password_hash('sha512') }}"
+        shell: /bin/bash
+        generate_ssh_key: yes
+        ssh_key_bits: 2048
+        ssh_key_file: /home/mihamieat/.ssh/id_rsa
+      register: user_creation
+
+    - name: Copy the public key to the authorized_keys
+      ansible.builtin.copy:
+        src: /home/mihamieat/.ssh/id_rsa.pub
+        dest: /home/mihamieat/.ssh/authorized_keys
+        owner: mihamieat
+        group: mihamieat
+        mode: 0600
+        remote_src: yes
+
+    - name: Disable password authentication for SSH
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config.d/no-pass.conf
+        regexp: '^#?PasswordAuthentication'
+        line: 'PasswordAuthentication no'
+        state: present
+
+  handlers:
+    - name: restart sshd
+      ansible.builtin.systemd:
+        name: sshd
+        state: restarted
