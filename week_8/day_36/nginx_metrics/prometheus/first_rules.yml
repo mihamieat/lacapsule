@@ -1,0 +1,22 @@
+groups:
+  - name: nginx_and_disk_alerts
+    rules:
+      # Alert: Nginx Down for More than 1 Minute
+      - alert: NginxDown
+        expr: up{job="nginx"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Nginx is down"
+          description: "Nginx has been unavailable for more than 1 minute. Check the service immediately."
+      
+      # Alert: Disk Usage > 80%
+      - alert: DiskUsageHigh
+        expr: (node_filesystem_size_bytes{mountpoint="/"} - node_filesystem_free_bytes{mountpoint="/"}) / node_filesystem_size_bytes{mountpoint="/"} > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Disk Usage High"
+          description: "The disk usage has exceeded 80% on {{ $labels.instance }}. Free up space to avoid issues."
