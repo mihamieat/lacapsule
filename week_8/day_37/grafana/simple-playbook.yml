@@ -1,0 +1,165 @@
+- name: Add user and configure SSH
+  hosts: all
+  remote_user: root
+  become: yes
+  tasks:
+    - name: Ensure the host is reachable
+      ansible.builtin.ping:
+
+    - name: Create custom user and add to sudo group
+      ansible.builtin.user:
+        name: mihamieat
+        group: sudo
+        password: "{{ 'p@$$wd' | password_hash('sha512') }}"
+        shell: /bin/bash
+        generate_ssh_key: yes
+        ssh_key_bits: 2048
+        ssh_key_file: /home/mihamieat/.ssh/id_rsa
+      register: user_creation
+
+    - name: Create custom sshd config file
+      ansible.builtin.file:
+        path: /etc/ssh/sshd_config.d/no-pass.conf
+        state: touch
+
+    - name: Disable password authentication for SSH
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config.d/no-pass.conf
+        regexp: '^#?PasswordAuthentication'
+        line: 'PasswordAuthentication no'
+        state: present
+
+  handlers:
+    - name: restart sshd
+      ansible.builtin.systemd:
+        name: sshd
+        state: restarted
+
+- name: Install necessary packages and Docker
+  hosts: all
+  remote_user: root
+  become: yes
+  tasks:
+    - name: Install essential system packages
+      apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - python3-pip
+          - virtualenv
+          - python3-setuptools
+          - git
+        state: latest
+        update_cache: true
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt:
+        name: docker-ce
+        state: latest
+        update_cache: true
+
+- name: Install and configure Grafana
+  hosts: all
+  remote_user: root
+  become: yes
+  tasks:
+    - name: Install required dependencies
+      apt:
+        name: 
+          - apt-transport-https
+          - software-properties-common
+          - wget
+        state: present
+
+    - name: Add Grafana GPG key
+      apt_key:
+        url: https://packages.grafana.com/gpg.key
+        state: present
+
+    - name: Add Grafana repository
+      apt_repository:
+        repo: "deb https://packages.grafana.com/oss/deb stable main"
+        state: present
+        filename: grafana
+
+    - name: Install Grafana
+      apt:
+        name: grafana
+        state: latest
+        update_cache: yes
+
+    - name: Start Grafana service
+      systemd:
+        name: grafana-server
+        state: started
+        enabled: yes
+
+    - name: Wait for Grafana to start
+      wait_for:
+        port: 3000
+        timeout: 60
+
+    - name: Ensure Grafana is running
+      uri:
+        url: http://localhost:3000
+        method: GET
+        status_code: 200
+      register: grafana_status
+      retries: 5
+      delay: 10
+      until: grafana_status.status == 200
+
+- name: Configure and run Docker Compose
+  hosts: all
+  remote_user: root
+  become: yes
+  tasks:
+    - name: Create docker-compose prometheus directory
+      ansible.builtin.file:
+        path: /opt/docker-compose/prometheus
+        state: directory
+        mode: '0755'
+
+    - name: Create docker-compose ningx directory
+      ansible.builtin.file:
+        path: /opt/docker-compose/nginx/conf
+        state: directory
+        mode: '0755'
+
+    - name: Copy docker-compose.yml to target
+      ansible.builtin.copy:
+        src: ./docker-compose.yml
+        dest: /opt/docker-compose/docker-compose.yml
+        mode: '0644'
+    - name: Copy prometheus config files to target
+      ansible.builtin.copy:
+        src: ./prometheus/prometheus.yml
+        dest: /opt/docker-compose/prometheus/prometheus.yml
+        mode: '0644'
+    
+    - name: Copy Nginx config file to target
+      ansible.builtin.copy:
+        src: ./nginx/conf/default.conf
+        dest: /opt/docker-compose/nginx/conf/default.conf
+        mode: '0644'
+
+    - name: Run docker-compose up
+      ansible.builtin.command:
+        cmd: docker compose up -d
+        chdir: /opt/docker-compose
+
+    - name: Ensure all containers are running
+      ansible.builtin.command:
+        cmd: docker ps

@@ -1,0 +1,4 @@
+all:
+  hosts:
+    x.234.63.244:
+      ansible_user: root
